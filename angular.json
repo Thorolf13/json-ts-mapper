@@ -2,5 +2,170 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "json-ts-mapper": {
+      "root": "projects/json-ts-mapper",
+      "sourceRoot": "projects/json-ts-mapper/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/json-ts-mapper/tsconfig.lib.json",
+            "project": "projects/json-ts-mapper/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/json-ts-mapper/src/test.ts",
+            "tsConfig": "projects/json-ts-mapper/tsconfig.spec.json",
+            "karmaConfig": "projects/json-ts-mapper/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/json-ts-mapper/tsconfig.lib.json",
+              "projects/json-ts-mapper/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "json-ts-mapper-demo": {
+      "root": "projects/json-ts-mapper-demo/",
+      "sourceRoot": "projects/json-ts-mapper-demo/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/json-ts-mapper-demo",
+            "index": "projects/json-ts-mapper-demo/src/index.html",
+            "main": "projects/json-ts-mapper-demo/src/main.ts",
+            "polyfills": "projects/json-ts-mapper-demo/src/polyfills.ts",
+            "tsConfig": "projects/json-ts-mapper-demo/tsconfig.app.json",
+            "assets": [
+              "projects/json-ts-mapper-demo/src/favicon.ico",
+              "projects/json-ts-mapper-demo/src/assets"
+            ],
+            "styles": [
+              "projects/json-ts-mapper-demo/src/styles.css"
+            ],
+            "scripts": [],
+            "es5BrowserSupport": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/json-ts-mapper-demo/src/environments/environment.ts",
+                  "with": "projects/json-ts-mapper-demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "json-ts-mapper-demo:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "json-ts-mapper-demo:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "json-ts-mapper-demo:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/json-ts-mapper-demo/src/test.ts",
+            "polyfills": "projects/json-ts-mapper-demo/src/polyfills.ts",
+            "tsConfig": "projects/json-ts-mapper-demo/tsconfig.spec.json",
+            "karmaConfig": "projects/json-ts-mapper-demo/karma.conf.js",
+            "styles": [
+              "projects/json-ts-mapper-demo/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/json-ts-mapper-demo/src/favicon.ico",
+              "projects/json-ts-mapper-demo/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/json-ts-mapper-demo/tsconfig.app.json",
+              "projects/json-ts-mapper-demo/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "json-ts-mapper-demo-e2e": {
+      "root": "projects/json-ts-mapper-demo-e2e/",
+      "projectType": "application",
+      "prefix": "",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/json-ts-mapper-demo-e2e/protractor.conf.js",
+            "devServerTarget": "json-ts-mapper-demo:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "json-ts-mapper-demo:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "projects/json-ts-mapper-demo-e2e/tsconfig.e2e.json",
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "json-ts-mapper"
 }

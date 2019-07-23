@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "json-ts-mapper": [
+        "dist/json-ts-mapper"
+      ],
+      "json-ts-mapper/*": [
+        "dist/json-ts-mapper/*"
+      ]
+    }
   }
 }
