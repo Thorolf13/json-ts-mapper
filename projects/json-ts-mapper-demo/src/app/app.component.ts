@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { JsonTsMapperService, JsonObject, JsonProperty, Optional, JsonConverter, JsonMapper, Context, CustomConverter, NotNull } from 'json-ts-mapper';
 
 @JsonConverter
-class Converter extends JsonMapper<object>{
+class Converter extends JsonMapper<any, object>{
   serialize(obj: any, context?: Context): any {
     console.log('serialize context', context);
     return obj ? obj.id : undefined;
