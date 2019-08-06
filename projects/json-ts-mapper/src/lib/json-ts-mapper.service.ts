@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import 'reflect-metadata';
 import { JSON_OBJECT, MAPPING_OPTIONS } from './decorators';
 import { MappingOptions } from './mapping-options';
-import { Context, JsonMapper } from './json-mapper';
+import { Context } from './json-mapper';
 import { Any } from './any';
 
 
@@ -142,16 +142,6 @@ export class JsonTsMapperService {
 
     if (options.customMapper) {
       const mapper = new options.customMapper();
-
-      const resuiredContextKeys = this.getMapperContextKeys(mapper, 'deserialize');
-      resuiredContextKeys.forEach(key => {
-        try {
-          context[key];
-        } catch (e) {
-          throw new Error(`JsonTsMapper | class : '${options.className}' | deserialize : custom mapper for class property ${options.classPropertyName} require context key ${key}`);
-        }
-      })
-
       return mapper.deserialize(jsonValue, context);
     } else if (Reflect.hasMetadata(JSON_OBJECT, options.expectedJsonType)) {
       return this.deserialize(jsonValue, options.expectedJsonType, context);
@@ -216,16 +206,6 @@ export class JsonTsMapperService {
     } else {
       if (options.customMapper) {
         const mapper = new options.customMapper();
-
-        const resuiredContextKeys = this.getMapperContextKeys(mapper, 'serialize');
-        resuiredContextKeys.forEach(key => {
-          try {
-            context[key];
-          } catch (e) {
-            throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : custom mapper for class property ${options.classPropertyName} require context key ${key}`);
-          }
-        })
-
         jsonValue = mapper.serialize(value, context);
       } else if (Reflect.hasMetadata(JSON_OBJECT, options.expectedJsonType)) {
         jsonValue = this.serialize(value, context);
@@ -250,15 +230,6 @@ export class JsonTsMapperService {
 
 
     return jsonValue;
-  }
-
-  getMapperContextKeys<T>(mapper: JsonMapper<T>, method: 'serialize' | 'deserialize'): string[] {
-    const contextKeys = mapper.requiredContextKeys();
-    if (!contextKeys || !contextKeys[method]) {
-      return [];
-    } else {
-      return contextKeys[method];
-    }
   }
 
   checkType(jsonValue: any, expectedJsonType: new () => {} = Any, isArray = false): boolean {

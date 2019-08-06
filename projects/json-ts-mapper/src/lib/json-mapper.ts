@@ -1,9 +1,7 @@
 export type Context = { [name: string]: any };
 
-export abstract class JsonMapper<T>{
+export abstract class JsonMapper<JsonType, TsType>{
 
-  abstract serialize(obj: T, context?: Context): any;
-  abstract deserialize(obj: any, context?: Context): T;
-
-  abstract requiredContextKeys(): { serialize?: string[], deserialize?: string[] } | void;
+  abstract serialize(obj: TsType, context?: Context): JsonType;
+  abstract deserialize(obj: JsonType, context?: Context): TsType;
 }

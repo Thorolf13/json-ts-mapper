@@ -8,7 +8,7 @@ export class MappingOptions {
     public isArray: boolean = false,
     public expectedJsonType: new () => {} = null,
     public isOptional: boolean = false,
-    public customMapper: new () => JsonMapper<any> = null,
+    public customMapper: new () => JsonMapper<any, any> = null,
     public notNull = false
   ) { }
 }

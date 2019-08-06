@@ -26,7 +26,7 @@ export function JsonObject(target: any) {
 
 }
 
-export function JsonProperty(jsonPropertyName?: string, expectedType?: { new(): {} } | { new(): {} }[]) {
+export function JsonProperty(jsonPropertyName: string, expectedType: { new(): {} } | { new(): {} }[]) {
   return function(target: any, classPropertyName: string) {
     let isArray = false;
 
@@ -71,7 +71,7 @@ export function NotNull(target: any, classPropertyName: string) {
   Reflect.defineMetadata(`${MAPPING_OPTIONS_NOTNULL}-${classPropertyName}`, true, target);
 }
 
-export function CustomConverter<T extends JsonMapper<any>>(customMapper: new () => T) {
+export function CustomConverter<T extends JsonMapper<any, any>>(customMapper: new () => T) {
   return function(target: any, classPropertyName: string) {
     Reflect.defineMetadata(`${MAPPING_OPTIONS_MAPPER}-${classPropertyName}`, customMapper, target);
   }
