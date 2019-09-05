@@ -1,4 +1,4 @@
-import { JsonMapper } from './json-mapper';
+import { AbstractJsonConverter } from './json-converter';
 
 export class MappingOptions {
   constructor(
@@ -8,7 +8,12 @@ export class MappingOptions {
     public isArray: boolean = false,
     public expectedJsonType: new () => {} = null,
     public isOptional: boolean = false,
-    public customMapper: new () => JsonMapper<any, any> = null,
-    public notNull = false
+    public customMapper: new () => AbstractJsonConverter<any, any> = null,
+    public notNull = false,
+    public overrideInitValue = false
   ) { }
+}
+
+export interface ClassMappingOptions {
+  overrideInitValues: boolean;
 }

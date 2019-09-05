@@ -28,6 +28,13 @@ class AngularComponentOrService{
 }
 ```
 
+## Changelog
+
+### 2.1.0
+* Add mapping option `overrideInitValues`
+ * if false _(default)_ : if json property is undefined and class property initialized, keep initialized value
+ * if true : override initialized value of property, even to set it to undefined
+
 ## Requireements
 
 ### install
@@ -130,7 +137,7 @@ Define a class that handle convertion between JSON and Ts properties
 ```ts
 import { Context, JsonMapper } from  '@thorolf/json-ts-mapper';
 
-class DateConverter extends JsonMapper<string, Date>{
+class DateConverter extends AbstractJsonConverter<string, Date>{
 
   serialize(obj: Date, context?: Context): string{
     // serialize object to string

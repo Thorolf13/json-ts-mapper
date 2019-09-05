@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import 'reflect-metadata';
 import { JSON_OBJECT, MAPPING_OPTIONS } from './decorators';
 import { MappingOptions } from './mapping-options';
-import { Context } from './json-mapper';
+import { Context } from './json-converter';
 import { Any } from './any';
 
 
@@ -94,10 +94,16 @@ export class JsonTsMapperService {
 
       mappingOptionsKeys.forEach(key => {
         const options: MappingOptions = Reflect.getMetadata(key, clazz);
+        const instanceInitValue = instance[options.classPropertyName];
+
         if (options.isArray) {
           instance[options.classPropertyName] = this.deserializePropertyArray(obj[options.jsonPropertyName], options, context);
         } else {
           instance[options.classPropertyName] = this.deserializeProperty(obj[options.jsonPropertyName], options, context);
+        }
+
+        if (instance[options.classPropertyName] === undefined && options.overrideInitValue === false) {
+          instance[options.classPropertyName] = instanceInitValue;
         }
       });
 

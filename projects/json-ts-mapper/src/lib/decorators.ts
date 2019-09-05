@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { JsonMapper } from './json-mapper';
-import { MappingOptions } from './mapping-options';
+import { AbstractJsonConverter } from './json-converter';
+import { MappingOptions, ClassMappingOptions } from './mapping-options';
 
 export const JSON_OBJECT = 'jtsm_json_object';
 export const CUSTOM_CONVERTER = 'jtsm_custom_converter';
@@ -24,6 +24,25 @@ export function JsonObject(target: any) {
       Reflect.defineMetadata(key, Reflect.getMetadata(key, target.prototype), target);
     });
 
+}
+
+export function JsonObjectOptions(options: ClassMappingOptions) {
+  return function(target: any) {
+    Reflect.defineMetadata(JSON_OBJECT, '__json_object__', target);
+
+    Reflect.getMetadataKeys(target.prototype)
+      .filter(key => {
+        return typeof key === 'string' && key.startsWith(MAPPING_OPTIONS);
+      })
+      .forEach((key: string) => {
+        const metadata = Reflect.getMetadata(key, target.prototype)
+        if (key.startsWith(MAPPING_OPTIONS_MAPPER) && options.overrideInitValues !== undefined) {
+          (metadata as MappingOptions).overrideInitValue = options.overrideInitValues;
+        }
+        Reflect.defineMetadata(key, metadata, target);
+      });
+
+  }
 }
 
 export function JsonProperty(jsonPropertyName: string, expectedType: { new(): {} } | { new(): {} }[]) {
@@ -71,7 +90,7 @@ export function NotNull(target: any, classPropertyName: string) {
   Reflect.defineMetadata(`${MAPPING_OPTIONS_NOTNULL}-${classPropertyName}`, true, target);
 }
 
-export function CustomConverter<T extends JsonMapper<any, any>>(customMapper: new () => T) {
+export function CustomConverter<T extends AbstractJsonConverter<any, any>>(customMapper: new () => T) {
   return function(target: any, classPropertyName: string) {
     Reflect.defineMetadata(`${MAPPING_OPTIONS_MAPPER}-${classPropertyName}`, customMapper, target);
   }
