@@ -125,7 +125,7 @@ export class JsonTsMapperService {
     }
 
     if (!this.checkType(jsonValues, options.expectedJsonType, true)) {
-      throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : type missmatch : expected type : Array, received type : ${typeof jsonValues}`);
+      throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : type missmatch for property ${options.jsonPropertyName} : expected type : Array, received type : ${typeof jsonValues}`);
     }
 
     return jsonValues.map(jsonValue => this.deserializeProperty(jsonValue, options, context));
@@ -143,7 +143,7 @@ export class JsonTsMapperService {
     }
 
     if (!this.checkType(jsonValue, options.expectedJsonType, false)) {
-      throw new Error(`JsonTsMapper | class : '${options.className}' | deserialize : type missmatch : expected type : ${options.expectedJsonType.name}, received type : ${typeof jsonValue}`);
+      throw new Error(`JsonTsMapper | class : '${options.className}' | deserialize : type missmatch for property ${options.jsonPropertyName} : expected type : ${options.expectedJsonType.name}, received type : ${typeof jsonValue}`);
     }
 
     if (options.customMapper) {
@@ -198,7 +198,7 @@ export class JsonTsMapperService {
     }
 
     if (!Array.isArray(values)) {
-      throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : type missmatch : expected type : Array, serialized type : ${typeof values}`);
+      throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : type missmatch for property ${options.classPropertyName} : expected type : Array, serialized type : ${typeof values}`);
     }
 
     return values.map((value: any) => this.serializeProperty(value, options, context));
@@ -231,7 +231,7 @@ export class JsonTsMapperService {
     }
 
     if (!this.checkType(jsonValue, options.expectedJsonType, false)) {
-      throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : type missmatch : expected type : ${options.expectedJsonType.name}, serialized type : ${typeof jsonValue}`);
+      throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : type missmatch for property ${options.classPropertyName}: expected type : ${options.expectedJsonType.name}, serialized type : ${typeof jsonValue}`);
     }
 
 

@@ -30,10 +30,12 @@ class AngularComponentOrService{
 
 ## Changelog
 
+### 2.1.1
+* improve error messages for missmatch types
+* add `overrideInitValues` in README
+
 ### 2.1.0
 * Add mapping option `overrideInitValues`
- * if false _(default)_ : if json property is undefined and class property initialized, keep initialized value
- * if true : override initialized value of property, even to set it to undefined
 
 ## Requireements
 
@@ -73,6 +75,9 @@ import { JsonObject, JsonProperty, Optional, CustomConverter, Any, NotNull} from
 import { DateConverter } from '...';
 
 @JsonObject
+@JsonObjectOptions({
+  overrideInitValues : true
+})
 export class User {
   @JsonProperty('id', Number)
   @NotNull // property cant be null or missing
@@ -100,6 +105,17 @@ export class User {
   date:Date;
 }
 ```
+
+* __JsonObject__ :
+
+Declare an object that can be handle by json mapper
+
+* __JsonObjectOptions__ :
+
+Define mapping options
+  * __overrideInitValues__ :
+    * if false _(default)_ : if json property is undefined and class property initialized, keep initial value
+    * if true : override initialized value of property, even to set it to undefined
 
 * __JsonProperty__ :
 
