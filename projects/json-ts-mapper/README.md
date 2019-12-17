@@ -151,7 +151,7 @@ Define a class that handle convertion between JSON and Ts properties
 ### CustomConverter
 
 ```ts
-import { Context, JsonMapper } from  '@thorolf/json-ts-mapper';
+import { Context, AbstractJsonConverter } from '@thorolf/json-ts-mapper';
 
 class DateConverter extends AbstractJsonConverter<string, Date>{
 
