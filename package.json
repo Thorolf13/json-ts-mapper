@@ -1,0 +1,35 @@
+{
+  "name": "json-ts-mapper",
+  "version": "2.0.0",
+  "description": "Mapping tool between json and Typescript classes, inspired by java-spring",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "test": "nyc mocha -r ts-node/register 'test/**/*.ts'"
+  },
+  "author": "thorolf13@gmail.com",
+  "homepage": "https://github.com/Thorolf13/json-ts-mapper",
+  "license": "LGPL3",
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.11.5",
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "babel-loader": "^8.1.0",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "ts-loader": "^7.0.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
+  "files": [
+    "dist/*",
+    "src/*"
+  ]
+}
