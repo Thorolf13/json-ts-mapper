@@ -1,15 +1,10 @@
 import { describe, it } from "mocha"
 import { expect } from "chai";
 
-import { JsonTsMapperService } from '../../src/lib/json-ts-mapper.service'
-import { JsonObject, JsonProperty, Optional, NotNull, CustomConverter, } from "../../src/lib/decorators";
-import { AbstractJsonConverter, Context } from "../../src/lib/json-converter";
+import { JsonTsMapper, JsonObject, JsonProperty, Optional, NotNull, CustomConverter, AbstractJsonConverter, Context } from "../../src";
 
 
 describe('[serialization]', () => {
-
-
-  const service = new JsonTsMapperService();
 
   it('should deszerialize json', () => {
     @JsonObject
@@ -44,7 +39,7 @@ describe('[serialization]', () => {
 
     const instance = new MyClass();
 
-    const json = service.serialize(instance);
+    const json = JsonTsMapper.serialize(instance);
 
     expect(json).eql({
       _string: 's1',
@@ -64,7 +59,7 @@ describe('[serialization]', () => {
       _string = 's1'
     }
 
-    expect(() => service.serialize(new MyClass())).to.throw('type missmatch')
+    expect(() => JsonTsMapper.serialize(new MyClass())).to.throw('type missmatch')
   })
 
   it(('should throw error @NotNull'), () => {
@@ -75,7 +70,7 @@ describe('[serialization]', () => {
       _notNull: null | string = null;
     }
 
-    expect(() => service.serialize(new MyClass())).to.throw('notNull')
+    expect(() => JsonTsMapper.serialize(new MyClass())).to.throw('notNull')
   })
 
   it(('should throw error property missing'), () => {
@@ -87,7 +82,7 @@ describe('[serialization]', () => {
 
     const json = {}
 
-    expect(() => service.serialize(new MyClass())).to.throw('missing')
+    expect(() => JsonTsMapper.serialize(new MyClass())).to.throw('missing')
   })
 
   it('should map arrays', () => {
@@ -98,7 +93,7 @@ describe('[serialization]', () => {
     }
     const instances = [new MyClass(), new MyClass()]
 
-    const json = service.serialize(instances);
+    const json = JsonTsMapper.serialize(instances);
     expect(json).eql([{ _string: ['s1', 's2'] }, { _string: ['s1', 's2'] }])
   })
 
@@ -118,7 +113,7 @@ describe('[serialization]', () => {
     const instance = new MyClass();
     instance.obj = new MyNestedClass();
 
-    const json = service.serialize(instance);
+    const json = JsonTsMapper.serialize(instance);
 
     expect(json).eql({
       obj: {
@@ -136,7 +131,7 @@ describe('[serialization]', () => {
       _number: number = 12;
     }
 
-    const json = service.serialize(new MyClass());
+    const json = JsonTsMapper.serialize(new MyClass());
 
     expect(json).eql({ _string: 's1' });
   })
@@ -168,7 +163,7 @@ describe('[serialization]', () => {
       date: Date = new Date(Date.UTC(2010, 10, 23, 8, 0, 0, 0));
     }
 
-    const json = service.serialize(new MyClass(), { timezone: +2 });
+    const json = JsonTsMapper.serialize(new MyClass(), { timezone: +2 });
     expect(json).eql({ date: '2010-11-23T10:00:00.000Z' });
   })
 });

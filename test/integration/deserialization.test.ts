@@ -1,15 +1,10 @@
 import { describe, it } from "mocha"
 import { expect } from "chai";
 
-import { JsonTsMapperService } from '../../src/lib/json-ts-mapper.service'
-import { JsonObject, JsonProperty, Optional, NotNull, CustomConverter, } from "../../src/lib/decorators";
-import { AbstractJsonConverter, Context } from "../../src/lib/json-converter";
+import { JsonTsMapper, JsonObject, JsonProperty, Optional, NotNull, CustomConverter, AbstractJsonConverter, Context } from "../../src";
 
 
 describe('[deserialization]', () => {
-
-
-  const service = new JsonTsMapperService();
 
   it('should deszerialize json', () => {
     @JsonObject
@@ -52,7 +47,7 @@ describe('[deserialization]', () => {
       _mapName: 's3',
     }
 
-    const instance = service.deserialize(json, MyClass);
+    const instance = JsonTsMapper.deserialize(json, MyClass);
 
     expect(instance).instanceOf(MyClass);
     expect(instance._string).equal('s1');
@@ -77,7 +72,7 @@ describe('[deserialization]', () => {
       _string: 1
     }
 
-    expect(() => service.deserialize(json, MyClass)).to.throw('type missmatch')
+    expect(() => JsonTsMapper.deserialize(json, MyClass)).to.throw('type missmatch')
   })
 
   it(('should throw error @NotNull'), () => {
@@ -92,7 +87,7 @@ describe('[deserialization]', () => {
       _notNull: null
     }
 
-    expect(() => service.deserialize(json, MyClass)).to.throw('notNull')
+    expect(() => JsonTsMapper.deserialize(json, MyClass)).to.throw('notNull')
   })
 
   it(('should throw error property missing'), () => {
@@ -104,7 +99,7 @@ describe('[deserialization]', () => {
 
     const json = {}
 
-    expect(() => service.deserialize(json, MyClass)).to.throw('missing')
+    expect(() => JsonTsMapper.deserialize(json, MyClass)).to.throw('missing')
   })
 
   it('should map arrays', () => {
@@ -120,7 +115,7 @@ describe('[deserialization]', () => {
       { _string: ['2', '5'] }
     ]
 
-    const instances = service.deserialize(json, MyClass);
+    const instances = JsonTsMapper.deserialize(json, MyClass);
     expect(instances).instanceOf(Array)
     expect(instances).to.have.lengthOf(3);
     expect((instances as any[])[0]).instanceOf(MyClass);
@@ -146,7 +141,7 @@ describe('[deserialization]', () => {
       }
     }
 
-    const instance = service.deserialize(json, MyClass);
+    const instance = JsonTsMapper.deserialize(json, MyClass);
 
     expect(instance).instanceOf(MyClass);
     expect(instance.obj).instanceOf(MyNestedClass);
@@ -167,7 +162,7 @@ describe('[deserialization]', () => {
       _number: 3
     }
 
-    const instance = service.deserialize(json, MyClass);
+    const instance = JsonTsMapper.deserialize(json, MyClass);
 
     expect(instance._number).equal(undefined);
   })
@@ -180,7 +175,7 @@ describe('[deserialization]', () => {
       @Optional
       _string: string = 'default'
     }
-    const instance = service.deserialize({}, MyClass);
+    const instance = JsonTsMapper.deserialize({}, MyClass);
 
     expect(instance._string).equal('default');
 
@@ -190,7 +185,7 @@ describe('[deserialization]', () => {
       @JsonProperty(String)
       _string: string = 'default'
     }
-    const instance2 = service.deserialize({}, MyClass2);
+    const instance2 = JsonTsMapper.deserialize({}, MyClass2);
 
     expect(instance2._string).equal(undefined);
   })
@@ -225,7 +220,7 @@ describe('[deserialization]', () => {
       date: '2010-11-23T10:00:00.000+0000'
     }
 
-    const instance = service.deserialize(json, MyClass, { timezone: +2 });
+    const instance = JsonTsMapper.deserialize(json, MyClass, { timezone: +2 });
 
     expect(instance).instanceOf(MyClass);
     expect(instance.date).instanceOf(Date);
