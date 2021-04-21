@@ -1,16 +1,36 @@
 # JsonTsMapper
 
-__JsonTsMapper__ is a small package that maps JSON objects to an instance of a TypeScript class, with mapping options and validation
+![Test](https://img.shields.io/badge/Tests-17/17-green.svg)
+![Coverage](https://img.shields.io/badge/Coverage-85%25-green.svg)
+![Dependencies](https://img.shields.io/badge/Dependencies-1-green.svg)
+![Typescript](https://img.shields.io/badge/Made%20with-Typescript-blue.svg)
+![LGPL3](https://img.shields.io/badge/Licence-LGPL%20V3-yellow.svg)
 
-__JsonTsMapper__ require some decorators in mapped class and a simple call :
+__JsonTsMapper__ is a small package that maps JSON objects to an instance of a TypeScript class
+
+* Minimalist : only one dependency
+* Create instances of classes instead of raw object
+* Format validation
+* Allow custom mapping
+* Easy to use
+* Inspired by Java way
+  
+Exemple :
 ```ts
-import { JsonTsMapperService } from 'json-ts-mapper'
+import { JsonTsMapperService, JsonObject, JsonProperty } from 'json-ts-mapper'
+
+@JsonObject
+class MyClass{
+
+  @JsonProperty(String)
+  myValue:string = 'default';
+
+}
 
 const mapper = new JsonTsMapperService()
 
-// Assume that you have a class 'MyClass' defined with required decorators
-// Assume that you get a json string or object from any source
 
+// Assume that you get a json string or object from any source
 const jsonString = '{ ... }';
 const jsonObject = { ... };
 
@@ -39,8 +59,7 @@ The package makes use of TypeScript decorators. If not done already, please acti
 {
   "compilerOptions": {
     [...]
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
     [...]
 }
 ```
