@@ -69,7 +69,7 @@ export class JsonTsMapperService {
    * @param clazz class to map object
    * @return instance of {T}
    */
-  deserializeObject<T extends Class_>(obj: Json | string, clazz: new () => T, context?: Context): T {
+  private deserializeObject<T extends Class_>(obj: Json | string, clazz: new () => T, context?: Context): T {
     if (typeof obj === 'string') {
       obj = JSON.parse(obj);
     }
@@ -84,7 +84,7 @@ export class JsonTsMapperService {
    * @param clazz class to map objects
    * @return T[]
    */
-  deserializeArray<T extends Class_>(obj: Json[] | string, clazz: new () => T, context?: Context): T[] {
+  private deserializeArray<T extends Class_>(obj: Json[] | string, clazz: new () => T, context?: Context): T[] {
     if (typeof obj === 'string') {
       obj = JSON.parse(obj);
     }

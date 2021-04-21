@@ -17,7 +17,7 @@ __JsonTsMapper__ is a small package that maps JSON objects to an instance of a T
   
 Exemple :
 ```ts
-import { JsonTsMapperService, JsonObject, JsonProperty } from 'json-ts-mapper'
+import { JsonTsMapper, JsonObject, JsonProperty } from 'json-ts-mapper'
 
 @JsonObject
 class MyClass{
@@ -27,15 +27,12 @@ class MyClass{
 
 }
 
-const mapper = new JsonTsMapperService()
-
-
 // Assume that you get a json string or object from any source
 const jsonString = '{ ... }';
 const jsonObject = { ... };
 
-const instance1 = mapper.deserialize(jsonString, MyClass);
-const instance2 = mapper.deserialize(jsonObject, MyClass);
+const instance1 = JsonTsMapper.deserialize(jsonString, MyClass);
+const instance2 = JsonTsMapper.deserialize(jsonObject, MyClass);
 
 console.log(instance1); // print MyClass{ ... } instead of Object{ ... }
 console.log(instance2); // print MyClass{ ... } instead of Object{ ... }
@@ -65,6 +62,25 @@ The package makes use of TypeScript decorators. If not done already, please acti
 ```
 
 ## Usage
+
+### serialize / deserialize
+```ts
+import { JsonTsMapper } from 'json-ts-mapper'
+
+// serialize can take an instance or an array of it
+JsonTsMapper.serialize(instance) // => {...}
+JsonTsMapper.serialize([instance1, instance2]) // => [{...},{...}]
+
+//serializeToString is same to serialize but stringified
+JsonTsMapper.serializeToString(instance); // => "{...}"
+
+// deserialize can take json string or object, single instance or array
+JsonTsMapper.deserialize("{...}", MyClass); // =>MyClass{...}
+JsonTsMapper.deserialize({...}, MyClass); // =>MyClass{...}
+JsonTsMapper.deserialize("[{...},{...}]", MyClass); // => [ MyClass{...}, MyClass{...} ]
+JsonTsMapper.deserialize([{...},{...}], MyClass); // => [ MyClass{...}, MyClass{...} ]
+
+```
 
 ### Class definition
 
@@ -182,11 +198,11 @@ A context object can be passed when calling serialize or deserialize method of m
 
 
 ```ts
-import { JsonTsMapperService } from  'json-ts-mapper';
+import { JsonTsMapper } from  'json-ts-mapper';
 
 const jsonObject = { ... };
 
 const mappingContext = {dateFormat:'yyyy-mm-dd', anotherProperty:['some','values']};
 
-const user = this.mapper.deserialize(jsonObject, User, mappingContext);
+const user = JsonTsMapper.deserialize(jsonObject, User, mappingContext);
 ```

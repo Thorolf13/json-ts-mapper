@@ -146,7 +146,7 @@ describe('[deserialization]', () => {
       }
     }
 
-    const instance = service.deserializeObject(json, MyClass);
+    const instance = service.deserialize(json, MyClass);
 
     expect(instance).instanceOf(MyClass);
     expect(instance.obj).instanceOf(MyNestedClass);
@@ -167,7 +167,7 @@ describe('[deserialization]', () => {
       _number: 3
     }
 
-    const instance = service.deserializeObject(json, MyClass);
+    const instance = service.deserialize(json, MyClass);
 
     expect(instance._number).equal(undefined);
   })
@@ -180,7 +180,7 @@ describe('[deserialization]', () => {
       @Optional
       _string: string = 'default'
     }
-    const instance = service.deserializeObject({}, MyClass);
+    const instance = service.deserialize({}, MyClass);
 
     expect(instance._string).equal('default');
 
@@ -190,7 +190,7 @@ describe('[deserialization]', () => {
       @JsonProperty(String)
       _string: string = 'default'
     }
-    const instance2 = service.deserializeObject({}, MyClass2);
+    const instance2 = service.deserialize({}, MyClass2);
 
     expect(instance2._string).equal(undefined);
   })
@@ -225,7 +225,7 @@ describe('[deserialization]', () => {
       date: '2010-11-23T10:00:00.000+0000'
     }
 
-    const instance = service.deserializeObject(json, MyClass, { timezone: +2 });
+    const instance = service.deserialize(json, MyClass, { timezone: +2 });
 
     expect(instance).instanceOf(MyClass);
     expect(instance.date).instanceOf(Date);
