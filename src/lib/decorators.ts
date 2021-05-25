@@ -45,7 +45,7 @@ function _JsonObject(options: ClassMappingOptions) {
   }
 }
 
-export function JsonProperty(expectedType: { new(): {} } | { new(): {} }[], jsonPropertyName?: string) {
+export function JsonProperty(expectedType?: { new(): {} } | { new(): {} }[], jsonPropertyName?: string) {
   return function (target: any, classPropertyName: string) {
     let isArray = false;
 

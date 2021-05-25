@@ -129,10 +129,11 @@ describe('[deserialization]', () => {
       @JsonProperty(String)
       _string?: string
     }
+
     @JsonObject
     class MyClass {
       @JsonProperty(MyNestedClass)
-      obj: MyNestedClass | null = null;
+      obj?: MyNestedClass;
     }
 
     const json = {

@@ -89,7 +89,7 @@ describe('[serialization]', () => {
     @JsonObject
     class MyClass {
       @JsonProperty([String])
-      _string = ['s1', 's2']
+      _string: string[] = ['s1', 's2']
     }
     const instances = [new MyClass(), new MyClass()]
 
