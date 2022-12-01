@@ -109,7 +109,7 @@ export class User {
   libelle:string;
 
   @JsonProperty(Boolean, 'valid')
-  isValid:boolean; // json and class properties cant have different names
+  isValid:boolean; // json and class properties can have different names
 
   @JsonProperty([Number])
   values:number[];
