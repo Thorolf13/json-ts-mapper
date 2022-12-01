@@ -1,6 +1,6 @@
 {
   "name": "json-ts-mapper",
-  "version": "2.1.7",
+  "version": "2.1.11",
   "description": "Mapping tool between json and Typescript classes, inspired by java-spring",
   "main": "dist/index.js",
   "scripts": {
