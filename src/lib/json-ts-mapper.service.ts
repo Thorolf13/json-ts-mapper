@@ -3,7 +3,7 @@
 import 'reflect-metadata';
 import { JSON_OBJECT, MAPPING_OPTIONS } from './decorators';
 import { MappingOptions } from './mapping-options';
-import { Context } from './json-converter';
+import { AbstractJsonConverter, Context } from './json-converter';
 import { Any } from './any';
 
 
@@ -18,14 +18,14 @@ type Json = {
 
 export class JsonTsMapperService {
 
-  serialize<T extends Class_>(instance: T, context?: Context): Json;
-  serialize<T extends Class_>(instance: T[], context?: Context): Json[];
+  serialize<T extends Class_> (instance: T, context?: Context): Json;
+  serialize<T extends Class_> (instance: T[], context?: Context): Json[];
   /**
    * Serialize objct to 'json object'
    * @param  obj object or array to serialize
    * @return    json object
    */
-  serialize<T extends Class_>(instance: T | T[], context?: Context): Json | Json[] {
+  serialize<T extends Class_> (instance: T | T[], context?: Context): Json | Json[] {
     if (Array.isArray(instance)) {
       return instance.map(item => this.serialize_loopProperties(item, context));
     } else {
@@ -38,20 +38,20 @@ export class JsonTsMapperService {
    * @param  obj object or array to serialize
    * @return    json string
    */
-  serializeToString<T extends Class_>(instance: T | T[], context?: Context): string {
+  serializeToString<T extends Class_> (instance: T | T[], context?: Context): string {
     return JSON.stringify(this.serialize(instance, context));
   }
 
-  deserialize<T extends Class_>(obj: Json[], clazz: new () => T, context?: Context): T[];
-  deserialize<T extends Class_>(obj: Json, clazz: new () => T, context?: Context): T;
-  deserialize<T extends Class_>(obj: string, clazz: new () => T, context?: Context): T | T[];
+  deserialize<T extends Class_> (obj: Json[], clazz: new () => T, context?: Context): T[];
+  deserialize<T extends Class_> (obj: Json, clazz: new () => T, context?: Context): T;
+  deserialize<T extends Class_> (obj: string, clazz: new () => T, context?: Context): T | T[];
   /**
    * Deserialize an instance or array of {T}
    * @param obj object, array or json string to deserialize
    * @param clazz class to map object
    * @return instance or array of {T}
    */
-  deserialize<T extends Class_>(obj: Json | Json[] | string, clazz: new () => T, context?: Context): T | T[] {
+  deserialize<T extends Class_> (obj: Json | Json[] | string, clazz: new () => T, context?: Context): T | T[] {
     if (typeof obj === 'string') {
       obj = JSON.parse(obj);
     }
@@ -69,7 +69,7 @@ export class JsonTsMapperService {
    * @param clazz class to map object
    * @return instance of {T}
    */
-  private deserializeObject<T extends Class_>(obj: Json | string, clazz: new () => T, context?: Context): T {
+  private deserializeObject<T extends Class_> (obj: Json | string, clazz: new () => T, context?: Context): T {
     if (typeof obj === 'string') {
       obj = JSON.parse(obj);
     }
@@ -84,7 +84,7 @@ export class JsonTsMapperService {
    * @param clazz class to map objects
    * @return T[]
    */
-  private deserializeArray<T extends Class_>(obj: Json[] | string, clazz: new () => T, context?: Context): T[] {
+  private deserializeArray<T extends Class_> (obj: Json[] | string, clazz: new () => T, context?: Context): T[] {
     if (typeof obj === 'string') {
       obj = JSON.parse(obj);
     }
@@ -93,7 +93,7 @@ export class JsonTsMapperService {
     return list.map(item => this.deserializeObject(item, clazz, context));
   }
 
-  private deserialize_loopProperties<T extends Class_>(obj: Json, clazz: new () => T, context?: Context): T {
+  private deserialize_loopProperties<T extends Class_> (obj: Json, clazz: new () => T, context?: Context): T {
     if (Reflect.hasMetadata(JSON_OBJECT, clazz)) {
       let instance: Class_ = new clazz();
 
@@ -122,7 +122,7 @@ export class JsonTsMapperService {
     }
   }
 
-  private deserializePropertyArray(jsonValues: JsonProperty[], options: MappingOptions, context?: Context): any[] {
+  private deserializePropertyArray (jsonValues: JsonProperty[], options: MappingOptions, context?: Context): any[] {
     if (jsonValues === undefined || jsonValues === null) {
       if (options.isOptional === false && jsonValues === undefined) {
         throw new Error(`JsonTsMapper | class : '${options.className}' | deserialize : json property ${options.jsonPropertyName} is missing and not optional`)
@@ -140,7 +140,7 @@ export class JsonTsMapperService {
     return jsonValues.map(jsonValue => this.deserializeProperty(jsonValue, options, context));
   }
 
-  private deserializeProperty(jsonValue: JsonProperty, options: MappingOptions, context?: Context): any {
+  private deserializeProperty (jsonValue: JsonProperty, options: MappingOptions, context?: Context): any {
     if (jsonValue === undefined || jsonValue === null) {
       if (options.isOptional === false && jsonValue === undefined) {
         throw new Error(`JsonTsMapper | class : '${options.className}' | deserialize : json property ${options.jsonPropertyName} is missing and not optional`)
@@ -156,7 +156,7 @@ export class JsonTsMapperService {
     }
 
     if (options.customMapper) {
-      const mapper = new options.customMapper();
+      const mapper = 'deserialize' in options.customMapper ? options.customMapper : new options.customMapper();
       return mapper.deserialize(jsonValue, context);
     } else if (Reflect.hasMetadata(JSON_OBJECT, options.expectedJsonType)) {
       return this.deserialize(jsonValue as Json, options.expectedJsonType, context);
@@ -165,7 +165,7 @@ export class JsonTsMapperService {
     }
   }
 
-  private serialize_loopProperties<T extends Class_>(instance: T, context?: Context): Json {
+  private serialize_loopProperties<T extends Class_> (instance: T, context?: Context): Json {
     if (Reflect.hasMetadata(JSON_OBJECT, instance.constructor)) {
       let json: Json = {};
 
@@ -195,7 +195,7 @@ export class JsonTsMapperService {
     }
   }
 
-  private serializePropertyArray(values: any[], options: MappingOptions, context?: Context): JsonProperty[] {
+  private serializePropertyArray (values: any[], options: MappingOptions, context?: Context): JsonProperty[] {
     if (values === null || values === undefined) {
       if (options.isOptional === false && values === undefined) {
         throw new Error(`JsonTsMapper | class : '${options.className}' | serialize : class property ${options.classPropertyName} is missing and not optional`);
@@ -213,14 +213,14 @@ export class JsonTsMapperService {
     return values.map((value: any) => this.serializeProperty(value, options, context));
   }
 
-  private serializeProperty(value: any, options: MappingOptions, context?: Context): JsonProperty {
+  private serializeProperty (value: any, options: MappingOptions, context?: Context): JsonProperty {
     let jsonValue: any;
 
     if (value === undefined || value === null) {
       jsonValue = value;
     } else {
       if (options.customMapper) {
-        const mapper = new options.customMapper();
+        const mapper = 'serialize' in options.customMapper ? options.customMapper : new options.customMapper();
         jsonValue = mapper.serialize(value, context);
       } else if (Reflect.hasMetadata(JSON_OBJECT, options.expectedJsonType)) {
         jsonValue = this.serialize(value, context);
@@ -247,7 +247,7 @@ export class JsonTsMapperService {
     return jsonValue;
   }
 
-  checkType(jsonValue: any, expectedJsonType: new () => {} = Any, isArray = false): boolean {
+  checkType (jsonValue: any, expectedJsonType: new () => {} = Any, isArray = false): boolean {
     if (isArray) {
       if (Array.isArray(jsonValue)) {
         if (jsonValue.length) {

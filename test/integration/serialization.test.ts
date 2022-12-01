@@ -140,7 +140,7 @@ describe('[serialization]', () => {
   it('should use converter (with context)', () => {
 
     class Converter extends AbstractJsonConverter<string, Date>{
-      serialize(obj: Date, context?: Context): string {
+      serialize (obj: Date, context?: Context): string {
         if (context === undefined || context.timezone === undefined) {
           throw new Error('context with timezone must be set')
         }
@@ -150,7 +150,7 @@ describe('[serialization]', () => {
 
         return d.toISOString();
       }
-      deserialize(obj: string, context?: Context): Date {
+      deserialize (obj: string, context?: Context): Date {
         throw new Error('not implemented !');
       }
 
@@ -165,5 +165,28 @@ describe('[serialization]', () => {
 
     const json = JsonTsMapper.serialize(new MyClass(), { timezone: +2 });
     expect(json).eql({ date: '2010-11-23T10:00:00.000Z' });
+  })
+
+  it('should use converter object', () => {
+
+    const converter = {
+      serialize (obj: string): string {
+        return obj.toUpperCase();
+      },
+      deserialize (obj: string, context?: Context): Date {
+        throw new Error('not implemented !');
+      }
+
+    }
+
+    @JsonObject
+    class MyClass {
+      @CustomConverter(converter)
+      @JsonProperty(String)
+      str: string = 'test'
+    }
+
+    const json = JsonTsMapper.serialize(new MyClass());
+    expect(json).eql({ str: 'TEST' });
   })
 });

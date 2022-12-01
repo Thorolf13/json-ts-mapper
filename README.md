@@ -179,6 +179,8 @@ Define a class that handle convertion between JSON and Ts property
 
 ### CustomConverter
 
+Custom converter can be a class, an instance of class or an object, it must be satisfying the AbstractJsonConverter interface
+
 ```ts
 import { Context, AbstractJsonConverter } from 'json-ts-mapper';
 
@@ -187,6 +189,15 @@ class DateConverter extends AbstractJsonConverter<string, Date>{
   serialize(obj: Date, context?: Context): string{
     // serialize object to string
   }
+  deserialize(obj: string, context?: Context): Date{
+    // deserialize date string to date object
+  }
+}
+
+const converter = {
+   serialize(obj: Date, context?: Context): string{
+    // serialize object to string
+  },
   deserialize(obj: string, context?: Context): Date{
     // deserialize date string to date object
   }

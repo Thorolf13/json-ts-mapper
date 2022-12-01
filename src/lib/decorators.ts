@@ -1,20 +1,19 @@
 import 'reflect-metadata';
-import { AbstractJsonConverter } from './json-converter';
+import { ConverterConstructor, ConverterInstance } from './json-converter';
 import { MappingOptions, ClassMappingOptions, isInstanceOfClassMappingOptions } from './mapping-options';
-import { Any } from './any';
 
 export const JSON_OBJECT = 'jtsm_json_object';
 export const CUSTOM_CONVERTER = 'jtsm_custom_converter';
 export const MAPPING_OPTIONS = 'jtsm_mapping_options';
 
-export function JsonConverter(target: any) {
+export function JsonConverter (target: any) {
   Reflect.defineMetadata(CUSTOM_CONVERTER, '__json_converter__', target);
 }
 
 
-export function JsonObject(option: ClassMappingOptions): (target: any) => void;
-export function JsonObject(target: any): void;
-export function JsonObject(arg1: any) {
+export function JsonObject (option: ClassMappingOptions): (target: any) => void;
+export function JsonObject (target: any): void;
+export function JsonObject (arg1: any) {
   if (isInstanceOfClassMappingOptions(arg1)) {
     return _JsonObject(arg1)
   } else {
@@ -23,7 +22,7 @@ export function JsonObject(arg1: any) {
 
 }
 
-function _JsonObject(options: ClassMappingOptions) {
+function _JsonObject (options: ClassMappingOptions) {
   return function (target: any) {
     Reflect.defineMetadata(JSON_OBJECT, '__json_object__', target);
 
@@ -45,7 +44,7 @@ function _JsonObject(options: ClassMappingOptions) {
   }
 }
 
-export function JsonProperty(expectedType?: { new(): {} } | { new(): {} }[], jsonPropertyName?: string) {
+export function JsonProperty (expectedType?: { new(): {} } | { new(): {} }[], jsonPropertyName?: string) {
   return function (target: any, classPropertyName: string) {
     let isArray = false;
 
@@ -72,21 +71,21 @@ export function JsonProperty(expectedType?: { new(): {} } | { new(): {} }[], jso
   }
 }
 
-export function Optional(target: any, classPropertyName: string) {
+export function Optional (target: any, classPropertyName: string) {
   _addPropertyOptions(target, classPropertyName, { isOptional: true });
 }
 
-export function NotNull(target: any, classPropertyName: string) {
+export function NotNull (target: any, classPropertyName: string) {
   _addPropertyOptions(target, classPropertyName, { notNull: true });
 }
 
-export function CustomConverter<T extends AbstractJsonConverter<any, any>>(customMapper: new () => T) {
+export function CustomConverter (customMapper: ConverterConstructor | ConverterInstance) {
   return function (target: any, classPropertyName: string) {
     _addPropertyOptions(target, classPropertyName, { customMapper })
   }
 }
 
-function _addPropertyOptions(target: any, propertyName: string, options: Partial<MappingOptions>) {
+function _addPropertyOptions (target: any, propertyName: string, options: Partial<MappingOptions>) {
   let _options: MappingOptions = Reflect.getMetadata(`${MAPPING_OPTIONS}-${propertyName}`, target);
 
   if (_options === undefined) {
