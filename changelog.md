@@ -2,10 +2,12 @@
  * remove @JsonObject
  * remove @JsonConverter
  * remove context in custom converters
+ * rename @CustomConverter to @Converter
  * rework metadata
- * rework build
+ * rework build (switch from webpack to vite)
  * fix types
  * fix decorators : use all with ()
+ * add function isMapped(target)
 
 ## 2.2.1
  * change visibility of 'desiarializeObject' and 'deserializeArray' to public
