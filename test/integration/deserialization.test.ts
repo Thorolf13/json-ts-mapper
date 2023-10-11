@@ -1,13 +1,13 @@
 import { describe, it } from "mocha"
 import { expect } from "chai";
+import 'reflect-metadata';
 
-import { JsonTsMapper, JsonObject, JsonProperty, Optional, NotNull, CustomConverter, AbstractJsonConverter, Context } from "../../src";
+import { JsonTsMapper, JsonProperty, Optional, NotNull, Converter, AbstractJsonConverter } from "../../src";
 
 
 describe('[deserialization]', () => {
 
   it('should deszerialize json', () => {
-    @JsonObject
     class MyClass {
 
       @JsonProperty(String)
@@ -23,14 +23,14 @@ describe('[deserialization]', () => {
       _stringArray?: string[];
 
       @JsonProperty(String)
-      @Optional
+      @Optional()
       _optional?: string;
 
       @JsonProperty(String)
       _null?: string;
 
       @JsonProperty(String, '_notNull')
-      @NotNull
+      @NotNull()
       _notNull?: string;
 
       @JsonProperty(String, '_mapName')
@@ -62,7 +62,6 @@ describe('[deserialization]', () => {
   })
 
   it(('should throw error wrong type'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(String)
       _string?: string
@@ -76,10 +75,9 @@ describe('[deserialization]', () => {
   })
 
   it(('should throw error @NotNull'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(String)
-      @NotNull
+      @NotNull()
       _notNull?: string
     }
 
@@ -91,7 +89,6 @@ describe('[deserialization]', () => {
   })
 
   it(('should throw error property missing'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(String)
       _string?: string
@@ -103,7 +100,6 @@ describe('[deserialization]', () => {
   })
 
   it('should map arrays', () => {
-    @JsonObject
     class MyClass {
       @JsonProperty([String])
       _string?: string[]
@@ -124,13 +120,11 @@ describe('[deserialization]', () => {
 
   it('should map nested classes', () => {
 
-    @JsonObject
     class MyNestedClass {
       @JsonProperty(String)
       _string?: string
     }
 
-    @JsonObject
     class MyClass {
       @JsonProperty(MyNestedClass)
       obj?: MyNestedClass;
@@ -150,7 +144,6 @@ describe('[deserialization]', () => {
   })
 
   it(('should ignore unmaped props'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(String)
       _string?: string
@@ -168,51 +161,20 @@ describe('[deserialization]', () => {
     expect(instance._number).equal(undefined);
   })
 
-  it(('should manage intial values'), () => {
+  it('should use converter', () => {
 
-    @JsonObject({ overrideInitValues: false })
-    class MyClass {
-      @JsonProperty(String)
-      @Optional
-      _string: string = 'default'
-    }
-    const instance = JsonTsMapper.deserialize({}, MyClass);
-
-    expect(instance._string).equal('default');
-
-    @JsonObject({ overrideInitValues: true })
-    class MyClass2 {
-      @Optional
-      @JsonProperty(String)
-      _string: string = 'default'
-    }
-    const instance2 = JsonTsMapper.deserialize({}, MyClass2);
-
-    expect(instance2._string).equal(undefined);
-  })
-
-  it('should use converter (with context)', () => {
-
-    class Converter extends AbstractJsonConverter<string, Date>{
-      serialize(obj: Date, context?: Context): string {
+    class MyConverter extends AbstractJsonConverter<string, Date>{
+      serialize (obj: Date): string {
         throw new Error('not implemented !');
       }
-      deserialize(obj: string, context?: Context): Date {
-        if (context === undefined || context.timezone === undefined) {
-          throw new Error('context with timezone must be set')
-        }
-
-        const date = new Date(Date.parse(obj));
-        date.setHours(date.getHours() - context.timezone);
-
-        return date;
+      deserialize (obj: string): Date {
+        return new Date(Date.parse(obj));
       }
 
     }
 
-    @JsonObject
     class MyClass {
-      @CustomConverter(Converter)
+      @Converter(MyConverter)
       @JsonProperty(String)
       date: Date | null = null;
     }
@@ -221,10 +183,10 @@ describe('[deserialization]', () => {
       date: '2010-11-23T10:00:00.000+0000'
     }
 
-    const instance = JsonTsMapper.deserialize(json, MyClass, { timezone: +2 });
+    const instance = JsonTsMapper.deserialize(json, MyClass);
 
     expect(instance).instanceOf(MyClass);
     expect(instance.date).instanceOf(Date);
-    expect(instance.date).to.eql(new Date(Date.UTC(2010, 10, 23, 8, 0, 0, 0)));
+    expect(instance.date).to.eql(new Date(Date.UTC(2010, 10, 23, 10, 0, 0, 0)));
   })
 });

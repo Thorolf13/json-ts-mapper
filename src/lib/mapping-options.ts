@@ -1,9 +1,7 @@
-import { AbstractJsonConverter, ConverterConstructor, ConverterInstance } from './json-converter';
+import { ConverterConstructor, ConverterInstance } from './json-converter';
 import { Any } from './any'
 
 type Nullable<T> = T | null;
-
-
 
 export class MappingOptions {
   constructor (
@@ -14,15 +12,6 @@ export class MappingOptions {
     public expectedJsonType: new () => {} = Any,
     public isOptional: boolean = false,
     public customMapper: Nullable<ConverterConstructor | ConverterInstance> = null,
-    public notNull = false,
-    public overrideInitValue = false
+    public notNull = false
   ) { }
-}
-
-export interface ClassMappingOptions {
-  overrideInitValues?: boolean;
-}
-
-export function isInstanceOfClassMappingOptions (obj: any): obj is ClassMappingOptions {
-  return 'overrideInitValues' in obj;
 }

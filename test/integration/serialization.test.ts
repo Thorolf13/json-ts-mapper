@@ -1,13 +1,12 @@
 import { describe, it } from "mocha"
 import { expect } from "chai";
 
-import { JsonTsMapper, JsonObject, JsonProperty, Optional, NotNull, CustomConverter, AbstractJsonConverter, Context } from "../../src";
+import { JsonTsMapper, JsonProperty, Optional, NotNull, Converter, AbstractJsonConverter } from "../../src";
 
 
 describe('[serialization]', () => {
 
   it('should deszerialize json', () => {
-    @JsonObject
     class MyClass {
 
       @JsonProperty(String)
@@ -23,14 +22,14 @@ describe('[serialization]', () => {
       _stringArray = ['s1', "s2"]
 
       @JsonProperty(String)
-      @Optional
+      @Optional()
       _optional?: string;
 
       @JsonProperty(String)
       _null: null | string = null;
 
       @JsonProperty(String, '_notNull')
-      @NotNull
+      @NotNull()
       _notNull?: string = 's2'
 
       @JsonProperty(String, '_mapName')
@@ -53,7 +52,6 @@ describe('[serialization]', () => {
   })
 
   it(('should throw error wrong type'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(Number)
       _string = 's1'
@@ -63,10 +61,9 @@ describe('[serialization]', () => {
   })
 
   it(('should throw error @NotNull'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(String)
-      @NotNull
+      @NotNull()
       _notNull: null | string = null;
     }
 
@@ -74,7 +71,6 @@ describe('[serialization]', () => {
   })
 
   it(('should throw error property missing'), () => {
-    @JsonObject
     class MyClass {
       @JsonProperty(String)
       _string?: string
@@ -86,7 +82,6 @@ describe('[serialization]', () => {
   })
 
   it('should map arrays', () => {
-    @JsonObject
     class MyClass {
       @JsonProperty([String])
       _string: string[] = ['s1', 's2']
@@ -99,12 +94,11 @@ describe('[serialization]', () => {
 
   it('should map nested classes', () => {
 
-    @JsonObject
     class MyNestedClass {
       @JsonProperty(String)
       _string: string = 's1'
     }
-    @JsonObject
+
     class MyClass {
       @JsonProperty(MyNestedClass)
       obj: MyNestedClass | null = null;
@@ -123,7 +117,7 @@ describe('[serialization]', () => {
   })
 
   it(('should ignore unmaped props'), () => {
-    @JsonObject
+
     class MyClass {
       @JsonProperty(String)
       _string: string = 's1'
@@ -139,49 +133,40 @@ describe('[serialization]', () => {
 
   it('should use converter (with context)', () => {
 
-    class Converter extends AbstractJsonConverter<string, Date>{
-      serialize (obj: Date, context?: Context): string {
-        if (context === undefined || context.timezone === undefined) {
-          throw new Error('context with timezone must be set')
-        }
-
-        const d = new Date(obj);
-        d.setHours(d.getHours() + context.timezone);
-
-        return d.toISOString();
+    class MyConverter extends AbstractJsonConverter<string, Date>{
+      serialize (obj: Date): string {
+        return obj.toISOString();
       }
-      deserialize (obj: string, context?: Context): Date {
+      deserialize (obj: string): Date {
         throw new Error('not implemented !');
       }
 
     }
 
-    @JsonObject
     class MyClass {
-      @CustomConverter(Converter)
+      @Converter(MyConverter)
       @JsonProperty(String)
       date: Date = new Date(Date.UTC(2010, 10, 23, 8, 0, 0, 0));
     }
 
-    const json = JsonTsMapper.serialize(new MyClass(), { timezone: +2 });
-    expect(json).eql({ date: '2010-11-23T10:00:00.000Z' });
+    const json = JsonTsMapper.serialize(new MyClass());
+    expect(json).eql({ date: '2010-11-23T08:00:00.000Z' });
   })
 
   it('should use converter object', () => {
 
-    const converter = {
+    const myConverter = {
       serialize (obj: string): string {
         return obj.toUpperCase();
       },
-      deserialize (obj: string, context?: Context): Date {
+      deserialize (obj: string): Date {
         throw new Error('not implemented !');
       }
 
     }
 
-    @JsonObject
     class MyClass {
-      @CustomConverter(converter)
+      @Converter(myConverter)
       @JsonProperty(String)
       str: string = 'test'
     }
