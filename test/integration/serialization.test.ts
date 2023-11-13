@@ -6,7 +6,7 @@ import { JsonTsMapper, JsonProperty, Optional, NotNull, Converter, AbstractJsonC
 
 describe('[serialization]', () => {
 
-  it('should deszerialize json', () => {
+  it('should serialize a class\'s instance', () => {
     class MyClass {
 
       @JsonProperty(String)
@@ -173,5 +173,27 @@ describe('[serialization]', () => {
 
     const json = JsonTsMapper.serialize(new MyClass());
     expect(json).eql({ str: 'TEST' });
+  })
+
+  it('should serialize an object as a mapped class', () => {
+    class MyClass {
+      @JsonProperty(String)
+      _string: string = '';
+
+      @JsonProperty(Number)
+      _number: number = 0;
+    }
+
+    const obj = {
+      _string: 's1',
+      _number: 12
+    }
+
+    const json = JsonTsMapper.serializeAs(obj, MyClass);
+    expect(json).eql({ _string: 's1', _number: 12 });
+
+    const str = JsonTsMapper.serializeAsToString(obj, MyClass);
+    expect(str).eql('{"_string":"s1","_number":12}')
+
   })
 });

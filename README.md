@@ -71,6 +71,13 @@ JsonTsMapper.serialize([instance1, instance2]) // => [{...},{...}]
 //serializeToString is same to serialize but stringified
 JsonTsMapper.serializeToString(instance); // => "{...}"
 
+//serializeAs an object against a class definition
+JsonTsMapper.serializeAs(instance, MyClass); // => {...}
+JsonTsMapper.serializeAs([instance1, instance2], MyClass); // => [{...},{...}]
+
+//serializeAsToString is same to serializeAs but stringified
+JsonTsMapper.serializeAsToString(instance, MyClass); // => "{...}"
+
 // deserialize can take json string or object, single instance or array
 JsonTsMapper.deserialize("{...}", MyClass); // =>MyClass{...}
 JsonTsMapper.deserialize({...}, MyClass); // =>MyClass{...}

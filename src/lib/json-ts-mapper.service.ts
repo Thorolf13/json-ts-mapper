@@ -6,7 +6,7 @@ import { getMappedProperties, getPropertyOptions, isMapped } from './metadata';
 
 interface Class_ {
   [key: string]: any
-}
+};
 
 type JsonProperty = null | string | number | boolean | Json;
 type Json = {
@@ -27,9 +27,9 @@ export class JsonTsMapperService {
    */
   serialize<T extends Class_> (instance: T | T[]): Json | Json[] {
     if (Array.isArray(instance)) {
-      return instance.map(item => this.serialize_loopProperties(item));
+      return instance.map(item => this.serialize_loopProperties(item, Object.getPrototypeOf(item)));
     } else {
-      return this.serialize_loopProperties(instance);
+      return this.serialize_loopProperties(instance, Object.getPrototypeOf(instance));
     }
   }
 
@@ -40,6 +40,32 @@ export class JsonTsMapperService {
    */
   serializeToString<T extends Class_> (instance: T | T[]): string {
     return JSON.stringify(this.serialize(instance));
+  }
+
+  serializeAs<T extends Class_> (obj: Object, clazz: new () => T): Json;
+  serializeAs<T extends Class_> (obj: Object[], clazz: new () => T): Json[];
+  /**
+   * serialize an instance or array against a class definition
+   * @param obj object or array to serialize
+   * @param clazz class to map object
+   * @returns
+   */
+  serializeAs<T extends Class_> (obj: Object | Object[], clazz: new () => T): Json | Json[] {
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.serialize_loopProperties(item, clazz));
+    } else {
+      return this.serialize_loopProperties(obj, clazz);
+    }
+  }
+
+  /**
+   * serialize an instance or array against a class definition to json string
+   * @param obj object or array to serialize
+   * @param clazz class to map object
+   * @returns json string
+   */
+  serializeAsToString<T extends Class_> (obj: Object | Object[], clazz: new () => T): string {
+    return JSON.stringify(this.serializeAs(obj, clazz));
   }
 
   deserialize<T extends Class_> (obj: Json[], clazz: new () => T): T[];
@@ -94,7 +120,7 @@ export class JsonTsMapperService {
     if (!Array.isArray(obj)) {
       throw new Error(`JsonTsMapper | class : '${clazz.name}' | Trying to deserialize an object with deserializeArray method`);
     }
-    const list = obj as Json[];
+    const list: Json[] = obj;
 
     return list.map(item => this.deserializeObject(item, clazz));
   }
@@ -164,13 +190,13 @@ export class JsonTsMapperService {
     }
   }
 
-  private serialize_loopProperties<T extends Class_> (instance: T): Json {
-    if (isMapped(instance)) {
+  private serialize_loopProperties<T extends Class_> (instance: T, clazz: new () => T): Json {
+    if (isMapped(clazz)) {
       let json: Json = {};
 
-      const mappedProperties = getMappedProperties(instance);
+      const mappedProperties = getMappedProperties(clazz);
       mappedProperties.forEach(propertyName => {
-        const options: MappingOptions = getPropertyOptions(instance, propertyName);
+        const options: MappingOptions = getPropertyOptions(clazz, propertyName);
         if (options.isArray) {
           json[options.jsonPropertyName] = this.serializePropertyArray(instance[options.classPropertyName], options);
         } else {

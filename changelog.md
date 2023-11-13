@@ -1,3 +1,7 @@
+## 3.1.0
+ * add function sertializeAs(object, class)
+ * add function serializeAsToString(object, class)
+
 ## 3.0.0
  * remove @JsonObject
  * remove @JsonConverter
